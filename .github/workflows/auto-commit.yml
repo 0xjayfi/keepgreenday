@@ -5,8 +5,9 @@ on:
     branches:
       - main
   schedule:
-    # Runs at 06:50 AM UTC+8 (22:50 UTC)
-    - cron: "50 22 * * *"
+    # Base time: 06:30 AM UTC+8 (22:30 UTC)
+    # Actual commit will happen randomly between 06:30-07:00 AM UTC+8
+    - cron: "30 22 * * *"
 
 jobs:
   autogreen:
@@ -19,11 +20,34 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v3
 
+      - name: Random delay
+        run: |
+          # Generate random delay between 0-30 minutes (0-1800 seconds)
+          delay=$((RANDOM % 1801))
+          echo "Waiting for $delay seconds ($(($delay / 60)) minutes $(($delay % 60)) seconds)..."
+          sleep $delay
+
       - name: Auto green
         run: |
           git config --local user.email "songjay8@gmail.com"
           git config --local user.name "0xjayfi"
           git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git pull --rebase
-          git commit --allow-empty -m "a commit a day keeps your girlfriend away and keep building"
+
+          # Array of commit messages
+          messages=(
+            "a commit a day keeps your girlfriend away and keep building"
+            "keep the streak alive 🌱"
+            "daily commit to maintain the green graph"
+            "another day, another commit"
+            "consistency is key"
+            "building something great, one commit at a time"
+            "staying green and staying keen"
+          )
+
+          # Select random message
+          random_index=$((RANDOM % ${#messages[@]}))
+          commit_msg="${messages[$random_index]}"
+
+          git commit --allow-empty -m "$commit_msg"
           git push
