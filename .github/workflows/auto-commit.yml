@@ -22,8 +22,8 @@ jobs:
 
       - name: Random delay
         run: |
-          # Generate random delay between 0-30 minutes (0-1800 seconds)
-          delay=$((RANDOM % 1801))
+          # Generate random delay between 0-5 minutes (0-300 seconds)
+          delay=$((RANDOM % 301))
           echo "Waiting for $delay seconds ($(($delay / 60)) minutes $(($delay % 60)) seconds)..."
           sleep $delay
 
