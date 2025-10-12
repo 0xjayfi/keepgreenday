@@ -5,9 +5,9 @@ on:
     branches:
       - main
   schedule:
-    # Base time: 06:30 AM UTC+8 (22:30 UTC)
-    # Actual commit will happen randomly between 06:30-07:00 AM UTC+8
-    - cron: "30 22 * * *"
+    # Base time: 09:45 AM UTC+8 (01:45 UTC)
+    # Actual commit will happen randomly between 09:45-09:50 AM UTC+8
+    - cron: "45 1 * * *"
 
 jobs:
   autogreen:
