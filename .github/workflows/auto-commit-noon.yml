@@ -1,0 +1,53 @@
+name: Auto Commit Noon Test
+
+on:
+  schedule:
+    # Base time: 12:25 PM UTC+8 (04:25 UTC)
+    # Actual commit will happen randomly between 12:20-12:30 PM UTC+8
+    - cron: "25 4 * * *"
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  autogreen:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Random delay
+        run: |
+          # Generate random delay between 0-10 minutes (0-600 seconds)
+          # This creates a window of 12:20-12:30 PM SGT
+          delay=$((RANDOM % 601))
+          echo "Waiting for $delay seconds ($(($delay / 60)) minutes $(($delay % 60)) seconds)..."
+          sleep $delay
+
+      - name: Auto green
+        run: |
+          git config --local user.email "songjay8@gmail.com"
+          git config --local user.name "0xjayfi"
+          git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git pull --rebase
+
+          # Array of noon-themed commit messages
+          messages=(
+            "🌞 noon commit to keep the streak going"
+            "midday momentum keeps the graph green"
+            "lunch break commit 🍱"
+            "high noon, high productivity"
+            "noon commit: another day, another build"
+            "12 o'clock and all is well 🕐"
+            "keeping the momentum through midday"
+          )
+
+          # Select random message
+          random_index=$((RANDOM % ${#messages[@]}))
+          commit_msg="${messages[$random_index]}"
+
+          git commit --allow-empty -m "$commit_msg"
+          git push
